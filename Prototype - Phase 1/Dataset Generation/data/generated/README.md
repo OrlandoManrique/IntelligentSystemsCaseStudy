@@ -46,7 +46,7 @@ This folder contains a **first-version dataset** for warehouse storage allocatio
 
 ---
 
-## **3. full_locations.csv**
+## **3. locations.csv**
 
 **Description:** Instantiated storage locations in the warehouse.
 **Columns:**
@@ -63,7 +63,7 @@ This folder contains a **first-version dataset** for warehouse storage allocatio
 
 ---
 
-## **4. full_allocations.csv**
+## **4. allocations.csv**
 
 **Description:** Preliminary allocations of items to locations.
 **Columns:**
