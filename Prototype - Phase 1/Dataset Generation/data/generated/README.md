@@ -17,9 +17,9 @@ This folder contains a **first-version dataset** for warehouse storage allocatio
 | QTY_PER_BOX   | Number of units per box              |
 | BOXES_ON_HAND | Number of boxes currently in stock   |
 | DEMAND        | Customer demand for this item        |
-| LEN_MM        | Item length in millimeters           |
-| WID_MM        | Item width in millimeters            |
-| DEP_MM        | Item depth in millimeters            |
+| LEN_MM        | Package length in millimeters           |
+| WID_MM        | Package width in millimeters            |
+| DEP_MM        | Package depth in millimeters            |
 
 **Notes:**
 
