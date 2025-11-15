@@ -1,8 +1,8 @@
-# Warehouse Optimization Project
+# Warehouse Simulation
 
 ## Overview
 
-This repository contains the codebase for a warehouse item relocation optimization project. The workflow involves synthetic data generation, warehouse simulation, and reinforcement learning (RL)-based optimization of item allocations.
+The workflow involves synthetic data generation, warehouse simulation, and reinforcement learning (RL)-based optimization of item allocations.
 
 The code is organized into multiple Python scripts and notebooks, with clear responsibilities for each component. Inputs and outputs are CSV files representing warehouse locations, item parts, and allocations. The system is designed to scale from small datasets for testing to larger synthetic warehouses.
 
