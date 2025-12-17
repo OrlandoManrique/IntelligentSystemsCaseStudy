@@ -4,37 +4,35 @@ from pathlib import Path
 
 def load_data():
     """
-    Loads parts, location types and locations.
-    Returns:
-        parts (list[dict])
-        part_meta (dict ITEM_ID -> row)
-        locations (list[dict])
-        total_capacity (float, m^3)
+    Loads parts and locations.
+    ALL DIMENSIONS AND POSITIONS ARE IN MILLIMETERS.
+    Volume is stored in mm³.
     """
-    BASE_PATH = Path(__file__).parent.parent  # project root
+
+    BASE_PATH = Path(__file__).parent.parent
     DATA_PATH = BASE_PATH / "Synthetic_data"
 
+    # =====================================================
+    # LOAD PARTS
+    # =====================================================
     parts_df = pd.read_csv(DATA_PATH / "synthetic_parts_generated.csv", sep=";")
-    location_types_df = pd.read_csv(DATA_PATH / "location_types.csv", sep=";")
-    locations_df = pd.read_csv(DATA_PATH / "locations.csv", sep=";")
 
-    # --- ABC classification based on DEMAND ---
+    # --- ABC classification based on demand ---
     parts_df = parts_df.sort_values("DEMAND", ascending=False).reset_index(drop=True)
     n_items = len(parts_df)
+
     nA = max(1, int(0.2 * n_items))
     nB = max(1, int(0.3 * n_items))
-    cut_A = nA
-    cut_B = min(nA + nB, n_items)
 
-    parts_df.loc[:cut_A - 1, "ABC_CLASS"] = "A"
-    parts_df.loc[cut_A:cut_B - 1, "ABC_CLASS"] = "B"
-    parts_df.loc[cut_B:, "ABC_CLASS"] = "C"
+    parts_df.loc[:nA - 1, "ABC_CLASS"] = "A"
+    parts_df.loc[nA:nA + nB - 1, "ABC_CLASS"] = "B"
+    parts_df.loc[nA + nB:, "ABC_CLASS"] = "C"
 
-    # Volume of SKU (X = length, Y = depth, Z = height)
-    parts_df["VOLUME_M3"] = (
+    # SKU volume (in mm³)
+    parts_df["VOLUME_MM3"] = (
         parts_df["LEN_MM"] *
         parts_df["DEP_MM"] *
-        parts_df["WID_MM"] / 1e9
+        parts_df["WID_MM"]
     )
 
     parts = parts_df.to_dict(orient="records")
@@ -44,39 +42,38 @@ def load_data():
         for _, row in parts_df.iterrows()
     }
 
-    # ---- Location types ----
-    location_types_df["VOLUME_M3"] = (
-        location_types_df["WID_MM"] *
-        location_types_df["DEP_MM"] *
-        location_types_df["HT_MM"] / 1e9
-    )
+    # =====================================================
+# ---- Load unified locations file (MM) ----
+    locations_df = pd.read_csv(DATA_PATH / "locations_dummy.csv", sep=",")
 
-    location_types = {
-        row["LOCATION_ID"]: row
-        for _, row in location_types_df.iterrows()
-    }
-
-    # ---- Build location instances ----
     locations = []
 
     for _, row in locations_df.iterrows():
-        loc_type = row["LOCATION_TYPE"]
-        type_data = location_types[loc_type]
 
-        dims_m = [
-            type_data["WID_MM"] / 1000,  # X
-            type_data["DEP_MM"] / 1000,  # Y
-            type_data["HT_MM"] / 1000    # Z
-        ]
+        width_mm  = int(row["width"])
+        depth_mm  = int(row["depth"])
+        height_mm = int(row["height"])
+
+        volume_mm3 = width_mm * depth_mm * height_mm
 
         locations.append({
-            "LOCATION_ID": row["LOCATION_ID"],
-            "TYPE": loc_type,
-            "DIMS_M": dims_m,
-            "VOLUME_M3": type_data["VOLUME_M3"],
+            "LOCATION_ID": row["loc_inst_code"],
+            "TYPE": row["loc_type"],
+
+            # Slot geometry (mm)
+            "DIMS_MM": [width_mm, depth_mm, height_mm],
+            "VOLUME_MM3": volume_mm3,
+
+            # Slot position in warehouse (mm)
+            "POS_X_MM": int(row["x"]),
+            "POS_Y_MM": int(row["y"]),
+            "POS_Z_MM": int(row["z"]),
+
+            # Allocation state
             "ASSIGNED_SKU": None,
             "MAX_UNITS": 0,
             "INIT_UNITS": 0,
+            "CURRENT_STOCK": 0,
             "ORIENTATION": None,
             "GRID": None,
             "FULL_LAYERS": 0,
@@ -84,9 +81,8 @@ def load_data():
             "UNITS_PER_LAYER": 0,
             "FULL_LAYERS_MTX": None,
             "PARTIAL_LAYER_MTX": None,
-            "CURRENT_STOCK": 0,
         })
 
-    total_capacity = sum(loc["VOLUME_M3"] for loc in locations)
+    total_capacity = sum(loc["VOLUME_MM3"] for loc in locations)
 
     return parts, part_meta, locations, total_capacity

@@ -11,20 +11,22 @@ def report_initial_state(locations, total_capacity, used_volume, max_print=50):
 
     for i, loc in enumerate(allocated[:max_print], 1):
         nX, nY, nZ = loc["GRID"]
+        ox, oy, oz = loc["ORIENTATION"]
 
-        layout_desc = f"{nX}x{nY}x{loc['FULL_LAYERS']}"
+        layout_desc = f"{nX} x {nY} x {loc['FULL_LAYERS']}"
         if loc["PARTIAL_UNITS"] > 0:
             layout_desc += f" + {loc['PARTIAL_UNITS']} units on last layer"
-
-        ox, oy, oz = loc["ORIENTATION"]
 
         print(
             f"{i}. Location: {loc['LOCATION_ID']} | Type: {loc['TYPE']} | "
             f"SKU: {loc['ASSIGNED_SKU']}\n"
-            f"   Initial allocation: {loc['INIT_UNITS']}/{loc['MAX_UNITS']} units\n"
-            f"   Grid capacity: {nX}x{nY}x{nZ}\n"
+            f"   Slot position (mm): "
+            f"X={loc['POS_X_MM']}, Y={loc['POS_Y_MM']}, Z={loc['POS_Z_MM']}\n"
+            f"   Initial allocation: {loc['INIT_UNITS']} / {loc['MAX_UNITS']} units\n"
+            f"   Grid capacity (X x Y x Z): {nX} x {nY} x {nZ}\n"
             f"   Allocation layout: {layout_desc}\n"
-            f"   Orientation: (X={ox:.3f}, Y={oy:.3f}, Z={oz:.3f})"
+            f"   Product orientation (mm): "
+            f"(X={int(ox)}, Y={int(oy)}, Z={int(oz)})"
         )
 
         if loc["PARTIAL_LAYER_MTX"] is not None:
@@ -33,16 +35,16 @@ def report_initial_state(locations, total_capacity, used_volume, max_print=50):
             print_ascii_layer(loc["PARTIAL_LAYER_MTX"])
             print()
         else:
-            print("All layers full.")
-            print()
+            print("   All layers full.\n")
 
     util_pct = (used_volume / total_capacity) * 100 if total_capacity > 0 else 0.0
 
     print("\n--- INITIAL SUMMARY ---")
-    print(f"Total rack volume: {total_capacity:.3f} m^3")
-    print(f"Used volume: {used_volume:.3f} m^3")
-    print(f"Utilization: {util_pct:.2f}%")
-    print(f"Allocated locations: {len(allocated)}/{len(locations)}")
+    print(f"Total rack volume: {int(total_capacity)} mm³")
+    print(f"Used volume:       {int(used_volume)} mm³")
+    print(f"Utilization:       {util_pct:.2f}%")
+    print(f"Allocated locations: {len(allocated)} / {len(locations)}")
+
 
 def export_allocations_csv(locations, filename="initial_allocation.csv"):
     """
@@ -61,23 +63,35 @@ def export_allocations_csv(locations, filename="initial_allocation.csv"):
             "LOCATION_ID": loc["LOCATION_ID"],
             "LOCATION_TYPE": loc["TYPE"],
             "SKU": loc["ASSIGNED_SKU"],
+
+            # Position
+            "POS_X_MM": loc["POS_X_MM"],
+            "POS_Y_MM": loc["POS_Y_MM"],
+            "POS_Z_MM": loc["POS_Z_MM"],
+
+            # Stock
             "INIT_UNITS": loc["INIT_UNITS"],
-            "MAX_UNITS": loc["MAX_UNITS"],
             "CURRENT_STOCK": loc["CURRENT_STOCK"],
+            "MAX_UNITS": loc["MAX_UNITS"],
+
+            # Geometry
             "GRID_X": nX,
             "GRID_Y": nY,
             "GRID_Z": nZ,
             "FULL_LAYERS": loc["FULL_LAYERS"],
             "PARTIAL_UNITS": loc["PARTIAL_UNITS"],
-            "ORIENT_X_M": ox,
-            "ORIENT_Y_M": oy,
-            "ORIENT_Z_M": oz,
-            "LOCATION_VOL_M3": loc["VOLUME_M3"],
+
+            # Orientation
+            "ORIENT_X_MM": int(ox),
+            "ORIENT_Y_MM": int(oy),
+            "ORIENT_Z_MM": int(oz),
+
+            # Volume
+            "LOCATION_VOL_MM3": loc["VOLUME_MM3"],
         })
 
     df = pd.DataFrame(rows)
 
-    # Save to project root / outputs
     base_path = Path(__file__).parent.parent
     out_path = base_path / "outputs"
     out_path.mkdir(exist_ok=True)
@@ -86,6 +100,7 @@ def export_allocations_csv(locations, filename="initial_allocation.csv"):
     df.to_csv(csv_path, index=False)
 
     print(f"\nAllocation CSV written to: {csv_path.resolve()}\n")
+
 
 def report_simulation_results(kpi):
     print("\n--- SIMULATION SUMMARY ---")
