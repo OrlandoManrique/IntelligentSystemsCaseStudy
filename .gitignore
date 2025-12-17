@@ -10,8 +10,8 @@ sim_scripts/__pycache__/
 other_scripts/
 
 # ---- Generated data / outputs ----
-outputs/
-synthetic_data/
+#outputs/
+#synthetic_data/
 
 #---- readme files ----
 README.md
