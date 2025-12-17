@@ -1,0 +1,18 @@
+# ---- Python virtual environment ----
+.venv/
+
+# ---- Python cache / compiled files ----
+sim_lib/__pycache__/
+sim_scripts/__pycache__/
+*.pyc
+
+# ---- Other scripts ----
+other_scripts/
+
+# ---- Generated data / outputs ----
+outputs/
+synthetic_data/
+
+#---- readme files ----
+README.md
+README.txt
