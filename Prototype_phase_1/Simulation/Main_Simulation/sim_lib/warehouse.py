@@ -11,7 +11,22 @@ def main():
     parts, part_meta, locations, total_capacity = load_data()
 
     # 2) Allocate initial stock
-    locations, used_volume = assign_initial_stock(parts, locations, total_capacity, target_utilization=0.5)
+    locations, used_volume, unallocated_df = assign_initial_stock(parts, locations, total_capacity, target_utilization=0.5)
+
+    if not unallocated_df.empty:
+        from pathlib import Path
+
+        base_path = Path(__file__).parent.parent
+        out_path = base_path / "outputs"
+        out_path.mkdir(exist_ok=True)
+
+        csv_path = out_path / "unallocated_skus.csv"
+        unallocated_df.to_csv(csv_path, index=False)
+
+        print(f"\nUnallocated SKUs written to: {csv_path.resolve()}\n")
+    else:
+        print("\nAll SKUs were successfully allocated.\n")
+
 
     # 3) Report initial layout
     report_initial_state(locations, total_capacity, used_volume, max_print=50)

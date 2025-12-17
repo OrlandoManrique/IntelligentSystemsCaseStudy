@@ -1,9 +1,11 @@
 import random
+import pandas as pd
 from .geometry import (
     compute_layered_capacity,
     compute_actual_layout,
     build_actual_matrix,
 )
+
 
 
 def assign_initial_stock(parts, locations, total_capacity, target_utilization=0.5):
@@ -22,10 +24,16 @@ def assign_initial_stock(parts, locations, total_capacity, target_utilization=0.
         locations, key=lambda x: x["VOLUME_MM3"], reverse=True
     )
 
+    unallocated_skus = []
+
     # ======================================================
     # PASS 1: ensure every SKU has at least one location
     # ======================================================
-    for sku in parts:
+    # Sort SKUs by placement difficulty (largest & most awkward first)
+    parts_sorted = sorted(parts, key=lambda s: max(s["LEN_MM"], s["DEP_MM"], s["WID_MM"]),reverse=True)
+
+    
+    for sku in parts_sorted:
         sku_id = sku["ITEM_ID"]
 
         # SKU dimensions IN MM (NO CONVERSION)
@@ -84,6 +92,15 @@ def assign_initial_stock(parts, locations, total_capacity, target_utilization=0.
 
         if not placed:
             print(f"WARNING: SKU {sku_id} could not fit in ANY location!")
+
+            unallocated_skus.append({
+                "ITEM_ID": sku_id,
+                "LEN_MM": sku["LEN_MM"],
+                "DEP_MM": sku["DEP_MM"],
+                "WID_MM": sku["WID_MM"],
+                "VOLUME_MM3": sku["VOLUME_MM3"],
+    })
+
 
     # ======================================================
     # PASS 2: fill remaining locations randomly
@@ -145,4 +162,6 @@ def assign_initial_stock(parts, locations, total_capacity, target_utilization=0.
         if used_volume_mm3 >= TARGET_UTILIZATION:
             break
 
-    return locations, used_volume_mm3
+    unallocated_df = pd.DataFrame(unallocated_skus)
+
+    return locations, used_volume_mm3, unallocated_df
