@@ -1,0 +1,12 @@
+ITEM_ID,LOC_CODE,QTY_ALLOCATED,ORIENTATION,UTILIZATION_PCT,NOTE
+79924774,A1-00001,7,"70.0x97.3x101.9 (Axes:('D', 'W', 'L'))",38.93,Success
+57944315,A2-00001,16,"227.8x37.1x72.4 (Axes:('L', 'D', 'W'))",23.47,Success
+15900455,A1-00002,1,"122.1x488.3x122.1 (Axes:('W', 'L', 'D'))",58.33,Success
+44318341,UNFIT,8,N/A,0.0,Dimensions exceed all empty bins
+71552588,A1-00003,1,"141.3x141.3x33.4 (Axes:('L', 'W', 'D'))",5.34,Success
+76839292,A3-00001,1,"296.1x296.1x88.2 (Axes:('L', 'W', 'D'))",8.53,Success
+68411238,A1-00004,1,"153.1x441.0x89.5 (Axes:('W', 'L', 'D'))",48.42,Success
+39515365,A3-00002,2,"318.7x265.7x53.1 (Axes:('L', 'W', 'D'))",9.92,Success
+85862494,A3-00003,6,"341.1x135.7x144.4 (Axes:('L', 'D', 'W'))",44.26,Success
+85862494,A2-00002,2,"144.4x341.1x135.7 (Axes:('W', 'L', 'D'))",32.05,Success
+13306221,A3-00004,1,"295.1x295.1x78.5 (Axes:('L', 'W', 'D'))",7.54,Success
