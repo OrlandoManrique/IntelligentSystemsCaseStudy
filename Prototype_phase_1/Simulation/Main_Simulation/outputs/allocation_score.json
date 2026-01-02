@@ -1,0 +1,25 @@
+{
+  "total_capacity_m3": 17.45,
+  "used_volume_m3": 10.865,
+  "total_waste_m3": 6.586,
+  "utilization_pct": 62.26,
+  "avg_fill_ratio_per_location": 0.61,
+  "n_locations_total": 357,
+  "n_locations_allocated": 357,
+  "n_unallocated_skus": 13,
+  "unallocated_item_ids": [
+    64822567,
+    45145318,
+    39465737,
+    27306510,
+    42876584,
+    97646562,
+    79993232,
+    55503690,
+    90562784,
+    60089872,
+    78300615,
+    38316960,
+    47564437
+  ]
+}

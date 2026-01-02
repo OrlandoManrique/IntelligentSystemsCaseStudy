@@ -3,9 +3,10 @@ from .geometry import print_ascii_layer
 import pandas as pd
 from pathlib import Path
 
+MM3_TO_M3 = 1e-9
 
-def report_initial_state(locations, total_capacity, used_volume, max_print=50):
-    print("\n--- WAREHOUSE INITIALIZATION ---\n")
+def report_initial_state(locations, total_capacity, used_volume, max_print=10):
+    print("\n--- WAREHOUSE INITIALIZATION (first 10 SKUs)---\n")
 
     allocated = [loc for loc in locations if loc["ASSIGNED_SKU"]]
 
@@ -39,11 +40,11 @@ def report_initial_state(locations, total_capacity, used_volume, max_print=50):
 
     util_pct = (used_volume / total_capacity) * 100 if total_capacity > 0 else 0.0
 
-    print("\n--- INITIAL SUMMARY ---")
-    print(f"Total rack volume: {int(total_capacity)} mm³")
-    print(f"Used volume:       {int(used_volume)} mm³")
-    print(f"Utilization:       {util_pct:.2f}%")
-    print(f"Allocated locations: {len(allocated)} / {len(locations)}")
+    #print("\n--- INITIAL SUMMARY ---")
+    #print(f"Total rack volume: {round(total_capacity * MM3_TO_M3, 3)} m³")
+    #print(f"Used volume:       {round(used_volume * MM3_TO_M3, 3)} m³")
+    #print(f"Utilization:       {round(util_pct, 3)} %")
+    #print(f"Allocated locations: {len(allocated)} / {len(locations)}")
 
 
 def export_allocations_csv(locations, filename="initial_allocation.csv"):
@@ -87,7 +88,9 @@ def export_allocations_csv(locations, filename="initial_allocation.csv"):
             "ORIENT_Z_MM": int(oz),
 
             # Volume
-            "LOCATION_VOL_MM3": loc["VOLUME_MM3"],
+            "LOCATION_VOL_MM3": round(loc["VOLUME_MM3"],3),
+            "LOCATION_VOL_M3": round(loc["VOLUME_MM3"] * MM3_TO_M3, 3),
+            "STORED_VOL_M3": round(loc.get("STORED_VOLUME_MM3", 0.0) * MM3_TO_M3, 3),
         })
 
     df = pd.DataFrame(rows)

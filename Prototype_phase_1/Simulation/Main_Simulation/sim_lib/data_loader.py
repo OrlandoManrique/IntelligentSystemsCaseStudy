@@ -1,3 +1,4 @@
+# sim_lib/data_loader.py
 import pandas as pd
 from pathlib import Path
 
@@ -7,10 +8,23 @@ def load_data():
     Loads parts and locations.
     ALL DIMENSIONS AND POSITIONS ARE IN MILLIMETERS.
     Volume is stored in mm³.
+
+    Returns:
+      parts: list[dict]
+      part_meta: dict[item_id -> pandas.Series-like row]
+      locations: list[dict]
+      total_capacity: float (mm³)
+      locations_index: dict[loc_id -> location dict]   (for O(1) lookup by loc_inst_code)
     """
 
     BASE_PATH = Path(__file__).parent.parent
-    DATA_PATH = BASE_PATH / "Synthetic_data"
+
+    # Be tolerant to folder name casing differences
+    data_path_candidates = [
+        BASE_PATH / "Synthetic_data",
+        BASE_PATH / "synthetic_data",
+    ]
+    DATA_PATH = next((p for p in data_path_candidates if p.exists()), data_path_candidates[0])
 
     # =====================================================
     # LOAD PARTS
@@ -43,8 +57,9 @@ def load_data():
     }
 
     # =====================================================
-# ---- Load unified locations file (MM) ----
-    locations_df = pd.read_csv(DATA_PATH / "locations_dummy.csv", sep=",")
+    # LOAD LOCATIONS (MM)
+    # =====================================================
+    locations_df = pd.read_csv(DATA_PATH / "locations.csv", sep=",")
 
     locations = []
 
@@ -62,7 +77,7 @@ def load_data():
 
             # Slot geometry (mm)
             "DIMS_MM": [width_mm, depth_mm, height_mm],
-            "VOLUME_MM3": volume_mm3,
+            "VOLUME_MM3": float(volume_mm3),
 
             # Slot position in warehouse (mm)
             "POS_X_MM": int(row["x"]),
@@ -81,8 +96,12 @@ def load_data():
             "UNITS_PER_LAYER": 0,
             "FULL_LAYERS_MTX": None,
             "PARTIAL_LAYER_MTX": None,
+
+            # Helpful for scoring/RL
+            "STORED_VOLUME_MM3": 0.0,
         })
 
-    total_capacity = sum(loc["VOLUME_MM3"] for loc in locations)
+    total_capacity = float(sum(loc["VOLUME_MM3"] for loc in locations))
+    locations_index = {loc["LOCATION_ID"]: loc for loc in locations}
 
-    return parts, part_meta, locations, total_capacity
+    return parts, part_meta, locations, total_capacity, locations_index
