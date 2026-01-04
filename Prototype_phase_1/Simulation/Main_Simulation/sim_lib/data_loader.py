@@ -29,7 +29,7 @@ def load_data():
     # =====================================================
     # LOAD PARTS
     # =====================================================
-    parts_df = pd.read_csv(DATA_PATH / "synthetic_parts_generated.csv", sep=";")
+    parts_df = pd.read_csv(DATA_PATH / "synthetic_parts_generated_dummy.csv", sep=";")
 
     # --- ABC classification based on demand ---
     parts_df = parts_df.sort_values("DEMAND", ascending=False).reset_index(drop=True)
@@ -59,7 +59,7 @@ def load_data():
     # =====================================================
     # LOAD LOCATIONS (MM)
     # =====================================================
-    locations_df = pd.read_csv(DATA_PATH / "locations.csv", sep=",")
+    locations_df = pd.read_csv(DATA_PATH / "locations_dummy.csv", sep=",")
 
     locations = []
 
