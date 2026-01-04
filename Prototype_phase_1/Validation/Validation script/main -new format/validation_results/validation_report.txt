@@ -1,0 +1,42 @@
+[2026-01-04 17:32:19] Output folder 'validation_results' ready.
+[2026-01-04 17:32:19] --- Loading LOCATIONS (locations_dummy.csv) ---
+[2026-01-04 17:32:19] SUCCESS: LOCATIONS loaded (357 rows).
+[2026-01-04 17:32:19] --- Loading ALLOCATIONS (allocations.csv) ---
+[2026-01-04 17:32:19] SUCCESS: ALLOCATIONS loaded (6300 rows).
+[2026-01-04 17:32:19] --- Loading PARTS (synthetic_parts_generated.csv) ---
+[2026-01-04 17:32:19] SUCCESS: PARTS loaded (75 rows).
+[2026-01-04 17:32:19] --- Check: Volume Data Integrity ---
+[2026-01-04 17:32:19] Starting Volume Data...
+[2026-01-04 17:32:19]    Est. time: 0.49s
+[2026-01-04 17:32:20] FAIL: 357 Volume Data mismatches.
+[2026-01-04 17:32:20] --- Check: Stated Utilization Accuracy ---
+[2026-01-04 17:32:20] Starting Utilization Data...
+[2026-01-04 17:32:20]    Est. time: 0.65s
+[2026-01-04 17:32:20] INFO: Checking utilization accuracy using column: 'UTILIZATION_PCT'
+[2026-01-04 17:32:21] FAIL: 357 Utilization % mismatches.
+[2026-01-04 17:32:21] --- Check: Inventory Balance (Partial Unallocated) ---
+[2026-01-04 17:32:21] FAIL: Found 75 Items with inventory mismatches.
+[2026-01-04 17:32:21] --- Check: Single SKU per Bin ---
+[2026-01-04 17:32:21] PASS: Single SKU constraint met.
+[2026-01-04 17:32:21] --- Check: Grid Math ---
+[2026-01-04 17:32:21] Starting Grid Math...
+[2026-01-04 17:32:21]    Est. time: 0.73s
+[2026-01-04 17:32:21] PASS: Grid Math consistent.
+[2026-01-04 17:32:21] --- Check: Rigid Body ---
+[2026-01-04 17:32:21] Starting Rigid Body...
+[2026-01-04 17:32:21]    Est. time: 0.55s
+[2026-01-04 17:32:22] PASS: Rigid Body dimensions valid.
+[2026-01-04 17:32:22] --- Check: Stack vs Bin Dimensions ---
+[2026-01-04 17:32:22] Starting Stack Fit...
+[2026-01-04 17:32:22]    Est. time: 0.60s
+[2026-01-04 17:32:23] FAIL: 27 allocations exceed bin dimensions.
+[2026-01-04 17:32:23] --- Check: Bin Overlaps ---
+[2026-01-04 17:32:23] Starting Bin Overlap...
+[2026-01-04 17:32:23]    Est. time: 0.01s
+[2026-01-04 17:32:23] PASS: No bin overlaps.
+[2026-01-04 17:32:23] --- Check: Unallocated Feasibility ---
+[2026-01-04 17:32:23] INFO: 75 items are Unallocated. Checking if they fit in empty bins...
+[2026-01-04 17:32:23] WARN: Unallocated items exist, but NO empty bins are available.
+[2026-01-04 17:32:23] --- Generating Utilization Plots ---
+[2026-01-04 17:32:23] Plot saved to validation_results/visual_utilization_max.png
+[2026-01-04 17:32:24] Plot saved to validation_results/visual_utilization_min.png
