@@ -36,7 +36,7 @@ def main():
 
     # 3) Report initial layout
     report_initial_state(locations, total_capacity, used_volume, max_print=10)
-    export_allocations_csv(locations, filename="initial_allocations.csv")
+    export_allocations_csv(locations, filename="allocations.csv")
 
     # 4) Export allocation score
     unallocated_ids = []
