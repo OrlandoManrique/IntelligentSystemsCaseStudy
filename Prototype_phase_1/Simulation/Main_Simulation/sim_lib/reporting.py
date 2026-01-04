@@ -60,19 +60,25 @@ def export_allocations_csv(locations, filename="initial_allocation.csv"):
         nX, nY, nZ = loc["GRID"]
         ox, oy, oz = loc["ORIENTATION"]
 
+        # Precompute per-slot volume utilization
+        location_vol_mm3 = float(loc["VOLUME_MM3"])
+        stored_vol_mm3 = float(loc.get("STORED_VOLUME_MM3", 0.0))
+        util_ratio = (stored_vol_mm3 / location_vol_mm3) if location_vol_mm3 > 0 else 0.0
+        util_pct = util_ratio * 100.0
+
         rows.append({
-            "LOCATION_ID": loc["LOCATION_ID"],
+            "loc_inst_code": loc["LOCATION_ID"],
             "LOCATION_TYPE": loc["TYPE"],
-            "SKU": loc["ASSIGNED_SKU"],
+            "ITEM_ID": loc["ASSIGNED_SKU"],
 
             # Position
-            "POS_X_MM": loc["POS_X_MM"],
-            "POS_Y_MM": loc["POS_Y_MM"],
-            "POS_Z_MM": loc["POS_Z_MM"],
+            #"POS_X_MM": loc["POS_X_MM"],
+            #"POS_Y_MM": loc["POS_Y_MM"],
+            #"POS_Z_MM": loc["POS_Z_MM"],
 
             # Stock
-            "INIT_UNITS": loc["INIT_UNITS"],
-            "CURRENT_STOCK": loc["CURRENT_STOCK"],
+            "QTY_ALLOCATED": loc["INIT_UNITS"],
+            #"CURRENT_STOCK": loc["CURRENT_STOCK"],
             "MAX_UNITS": loc["MAX_UNITS"],
 
             # Geometry
@@ -91,6 +97,7 @@ def export_allocations_csv(locations, filename="initial_allocation.csv"):
             "LOCATION_VOL_MM3": round(loc["VOLUME_MM3"],3),
             "LOCATION_VOL_M3": round(loc["VOLUME_MM3"] * MM3_TO_M3, 3),
             "STORED_VOL_M3": round(loc.get("STORED_VOLUME_MM3", 0.0) * MM3_TO_M3, 3),
+            "UTILIZATION_PCT": round(util_pct, 3),
         })
 
     df = pd.DataFrame(rows)

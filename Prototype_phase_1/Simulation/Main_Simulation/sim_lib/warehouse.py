@@ -1,5 +1,6 @@
 # sim_lib/warehouse.py
 import json
+import pandas as pd
 from pathlib import Path
 
 from .data_loader import load_data
@@ -50,27 +51,27 @@ def main():
     export_allocation_score_json(allocation_score)
 
     # 5) Export unallocated SKUs
-    if unallocated_df is not None and not unallocated_df.empty:
-        base_path = Path(__file__).parent.parent
-        out_path = base_path / "outputs"
-        out_path.mkdir(exist_ok=True)
+    base_path = Path(__file__).parent.parent
+    out_path = base_path / "outputs"
+    out_path.mkdir(exist_ok=True)
 
-        # --- INSERT: stable CSV schema (id + dimensions) ---
-        cols = ["ITEM_ID", "LEN_MM", "DEP_MM", "WID_MM", "VOLUME_MM3"]
-        existing_cols = [c for c in cols if c in unallocated_df.columns]
-        unallocated_df = unallocated_df[existing_cols].copy()
+    csv_path = out_path / "unallocated_skus.csv"
 
-        csv_path = out_path / "unallocated_skus.csv"
-        unallocated_df.to_csv(csv_path, index=False)
-        print(f"\nUnallocated SKUs written to: {csv_path.resolve()}\n")
+    EXPECTED_COLS = ["ITEM_ID", "LEN_MM", "DEP_MM", "WID_MM", "VOLUME_MM3", "REASON"]
+
+    if unallocated_df is None or unallocated_df.empty:
+        unallocated_df = pd.DataFrame(columns=EXPECTED_COLS)
     else:
-        print("\nAll SKUs were successfully allocated or allocation stopped early.\n")
+        unallocated_df = unallocated_df[EXPECTED_COLS].copy()
+
+    unallocated_df.to_csv(csv_path, index=False)
+    print(f"\nUnallocated SKUs written to: {csv_path.resolve()}\n")
+
+    if unallocated_df.empty:
+        print("\nAll SKUs were successfully allocated.\n")
 
 
-
-
-
-    # 5) Build SKU state (RL / inventory simulation uses this)
+    # 6) Build SKU state (RL / inventory simulation uses this)
     sku_state = build_sku_state(part_meta, locations)
 
     # 6) Run monthly simulation

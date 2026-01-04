@@ -4,8 +4,7 @@ import pandas as pd
 from .geometry import (
     compute_layered_capacity,
     compute_actual_layout,
-    build_actual_matrix,
-)
+    build_actual_matrix,)
 
 
 def _cached_capacity(loc, sku, fit_cache):
@@ -116,12 +115,17 @@ def assign_initial_stock(
                 feasible_locs.append((loc, max_units, orientation, grid))
 
         if not feasible_locs:
+            # Distinguish between no free locations and no feasible fit
+            free_locs_exist = any(l["ASSIGNED_SKU"] is None for l in locations_sorted)
+            reason = "NO_FREE_LOCATIONS" if not free_locs_exist else "NO_FEASIBLE_FIT"
+
             unallocated_skus.append({
                 "ITEM_ID": sku_id,
                 "LEN_MM": sku["LEN_MM"],
                 "DEP_MM": sku["DEP_MM"],
                 "WID_MM": sku["WID_MM"],
                 "VOLUME_MM3": sku["VOLUME_MM3"],
+                "REASON": reason,
             })
             continue
 
