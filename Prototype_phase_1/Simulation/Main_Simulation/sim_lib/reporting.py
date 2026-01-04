@@ -94,10 +94,10 @@ def export_allocations_csv(locations, filename="initial_allocation.csv"):
             "ORIENT_Z_MM": int(oz),
 
             # Volume
-            "LOCATION_VOL_MM3": round(loc["VOLUME_MM3"],3),
-            "LOCATION_VOL_M3": round(loc["VOLUME_MM3"] * MM3_TO_M3, 3),
-            "STORED_VOL_M3": round(loc.get("STORED_VOLUME_MM3", 0.0) * MM3_TO_M3, 3),
-            "UTILIZATION_PCT": round(util_pct, 3),
+            "LOCATION_VOL_MM3": round(loc["VOLUME_MM3"],1),
+            "LOCATION_VOL_M3": round(loc["VOLUME_MM3"] * MM3_TO_M3, 1),
+            "STORED_VOL_M3": round(loc.get("STORED_VOLUME_MM3", 0.0) * MM3_TO_M3, 1),
+            "UTILIZATION_PCT": round(util_pct, 1),
         })
 
     df = pd.DataFrame(rows)

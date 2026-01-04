@@ -46,14 +46,14 @@ def _compute_allocation_score(locations, total_capacity, used_volume_mm3, unallo
     util_pct = (used_volume_mm3 / total_capacity) * 100.0 if total_capacity > 0 else 0.0
 
     return {
-        # Volumes (converted and rounded)
-        "total_capacity_m3": round(total_capacity * MM3_TO_M3, 3),
-        "used_volume_m3": round(used_volume_mm3 * MM3_TO_M3, 3),
-        "total_waste_m3": round(total_waste_mm3 * MM3_TO_M3, 3),
+        # Volumes converted into m3
+        "total_capacity_m3": total_capacity * MM3_TO_M3,
+        "used_volume_m3": used_volume_mm3 * MM3_TO_M3,
+        "total_waste_m3": total_waste_mm3 * MM3_TO_M3,
 
         # Utilization
-        "utilization_pct": round(util_pct, 3),
-        "avg_fill_ratio_per_location": round(avg_fill_ratio, 3),
+        "utilization_pct": util_pct,
+        "avg_fill_ratio_per_location": avg_fill_ratio,
 
         # Counts
         "n_locations_total": n_total,
