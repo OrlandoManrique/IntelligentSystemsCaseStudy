@@ -1,5 +1,0 @@
-loc_inst_code,loc_type,x,y,z,width,depth,height,row_num,bay_num,level_num,address_label
-L-HUGE-1,A1,0,0,0,100,100,100,1,1,1,BIG-1
-L-HUGE-2,A1,0,0,0,100,100,100,1,1,1,BIG-2
-L-SMALL-1,A1,0,0,0,20,20,20,1,1,1,SML-1
-L-SMALL-2,A1,0,0,0,20,20,20,1,1,1,SML-2
