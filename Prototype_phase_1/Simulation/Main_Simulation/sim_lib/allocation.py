@@ -104,61 +104,71 @@ def assign_initial_stock(
     # ======================================================
     for sku in parts_sorted:
         sku_id = sku["ITEM_ID"]
+        remaining_qty = int(sku.get("BOXES_ON_HAND", 0))
 
-        feasible_locs = []
-        for loc in locations_sorted:
-            if loc["ASSIGNED_SKU"] is not None:
-                continue
-
-            max_units, orientation, grid = _cached_capacity(loc, sku, fit_cache)
-            if max_units > 0:
-                feasible_locs.append((loc, max_units, orientation, grid))
-
-        if not feasible_locs:
-            # Distinguish between no free locations and no feasible fit
-            free_locs_exist = any(l["ASSIGNED_SKU"] is None for l in locations_sorted)
-            reason = "NO_FREE_LOCATIONS" if not free_locs_exist else "NO_FEASIBLE_FIT"
-
-            unallocated_skus.append({
-                "ITEM_ID": sku_id,
-                "LEN_MM": sku["LEN_MM"],
-                "DEP_MM": sku["DEP_MM"],
-                "WID_MM": sku["WID_MM"],
-                "VOLUME_MM3": sku["VOLUME_MM3"],
-                "REASON": reason,
-            })
+        # Skip SKUs with no stock
+        if remaining_qty <= 0:
             continue
 
-        # chaotic: pick one feasible location at random
-        loc, max_units, orientation, grid = random.choice(feasible_locs)
+        # Keep allocating this SKU into new empty locations until stock is exhausted
+        while remaining_qty > 0:
+            feasible_locs = []
+            for loc in locations_sorted:
+                if loc["ASSIGNED_SKU"] is not None:
+                    continue
 
-        init_units = int(max_units)
-        stored_volume = init_units * float(sku["VOLUME_MM3"])
+                max_units, orientation, grid = _cached_capacity(loc, sku, fit_cache)
+                if max_units > 0:
+                    feasible_locs.append((loc, max_units, orientation, grid))
 
-        full_layers, units_per_layer, partial_units = compute_actual_layout(init_units, grid)
-        full_mtx, partial_mtx = build_actual_matrix(init_units, grid)
+            if not feasible_locs:
+                # Distinguish between no free locations and no feasible fit (within free slots)
+                free_locs_exist = any(l["ASSIGNED_SKU"] is None for l in locations_sorted)
+                reason = "NO_FREE_LOCATIONS" if not free_locs_exist else "NO_FEASIBLE_FIT"
 
-        loc.update({
-            "ASSIGNED_SKU": sku_id,
-            "MAX_UNITS": int(max_units),
-            "INIT_UNITS": int(init_units),
-            "CURRENT_STOCK": int(init_units),
-            "ORIENTATION": orientation,
-            "GRID": grid,
-            "FULL_LAYERS": int(full_layers),
-            "PARTIAL_UNITS": int(partial_units),
-            "UNITS_PER_LAYER": int(units_per_layer),
-            "FULL_LAYERS_MTX": full_mtx,
-            "PARTIAL_LAYER_MTX": partial_mtx,
-            "STORED_VOLUME_MM3": float(stored_volume),
-        })
+                unallocated_skus.append({
+                    "ITEM_ID": sku_id,
+                    "LEN_MM": sku["LEN_MM"],
+                    "DEP_MM": sku["DEP_MM"],
+                    "WID_MM": sku["WID_MM"],
+                    "VOLUME_MM3": sku["VOLUME_MM3"],
+                    "REASON": reason,
+                    "QTY_UNALLOCATED": int(remaining_qty),
+                })
+                break  # stop allocating this SKU, move to next
 
-        used_volume_mm3 += stored_volume
+            # chaotic: pick one feasible location at random
+            loc, max_units, orientation, grid = random.choice(feasible_locs)
+
+            # Allocate only what we have left in stock (cannot exceed location capacity)
+            init_units = int(min(max_units, remaining_qty))
+            stored_volume = init_units * float(sku["VOLUME_MM3"])
+
+            full_layers, units_per_layer, partial_units = compute_actual_layout(init_units, grid)
+            full_mtx, partial_mtx = build_actual_matrix(init_units, grid)
+
+            loc.update({
+                "ASSIGNED_SKU": sku_id,
+                "MAX_UNITS": int(max_units),
+                "INIT_UNITS": int(init_units),
+                "CURRENT_STOCK": int(init_units),
+                "ORIENTATION": orientation,
+                "GRID": grid,
+                "FULL_LAYERS": int(full_layers),
+                "PARTIAL_UNITS": int(partial_units),
+                "UNITS_PER_LAYER": int(units_per_layer),
+                "FULL_LAYERS_MTX": full_mtx,
+                "PARTIAL_LAYER_MTX": partial_mtx,
+                "STORED_VOLUME_MM3": float(stored_volume),
+            })
+
+            used_volume_mm3 += stored_volume
+            remaining_qty -= init_units
 
     # ======================================================
     # PASS 2: fill remaining locations randomly as much as possible
     # ======================================================
-    remaining_locations = [loc for loc in locations_sorted if loc["ASSIGNED_SKU"] is None]
+    """remaining_locations = [loc for loc in locations_sorted if loc["ASSIGNED_SKU"] is None]
     random.shuffle(remaining_locations)
 
     for loc in remaining_locations:
@@ -231,8 +241,7 @@ def assign_initial_stock(
                 used_volume_mm3 += stored_volume
                 placed = True
                 break
-
-        # if still not placed: that location is genuinely not feasible for any SKU
+"""
 
     unallocated_df = pd.DataFrame(unallocated_skus)
 

@@ -47,7 +47,7 @@ def report_initial_state(locations, total_capacity, used_volume, max_print=10):
     #print(f"Allocated locations: {len(allocated)} / {len(locations)}")
 
 
-def export_allocations_csv(locations, filename="initial_allocation.csv"):
+def export_allocations_csv(locations, filename="allocation.csv"):
     """
     Exports one row per location with allocation + geometry info.
     """
@@ -89,9 +89,9 @@ def export_allocations_csv(locations, filename="initial_allocation.csv"):
             "PARTIAL_UNITS": loc["PARTIAL_UNITS"],
 
             # Orientation
-            "ORIENT_X_MM": int(ox),
-            "ORIENT_Y_MM": int(oy),
-            "ORIENT_Z_MM": int(oz),
+            "ORIENT_X_MM": ox,
+            "ORIENT_Y_MM": oy,
+            "ORIENT_Z_MM": oz,
 
             # Volume
             "LOCATION_VOL_MM3": round(loc["VOLUME_MM3"],1),
