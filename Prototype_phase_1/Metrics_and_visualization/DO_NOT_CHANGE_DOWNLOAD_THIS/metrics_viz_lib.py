@@ -43,10 +43,18 @@ def _save_and_show_plot(fig, tag):
 
 def _clean_allocation_data(df_alloc):
     df = df_alloc.copy()
-    rename_map = {'LOC_CODE': 'LOCATION_ID', 'ITEM_ID': 'SKU', 'UTILIZATION_PCT': 'utilization', 'QTY_ALLOCATED': 'QTY'}
+    
+    # CHANGE APPLIED: mapped 'loc_inst_code' (new format) to 'LOCATION_ID'
+    rename_map = {
+        'loc_inst_code': 'LOCATION_ID', 
+        'ITEM_ID': 'SKU', 
+        'UTILIZATION_PCT': 'utilization', 
+        'QTY_ALLOCATED': 'QTY'
+    }
     df.rename(columns=rename_map, inplace=True)
     
     if 'utilization' in df.columns:
+        # Handles the percentage format (e.g., 63.737 -> 0.63737)
         if df['utilization'].max() > 1.1:
             df['utilization'] = df['utilization'] / 100.0
             
