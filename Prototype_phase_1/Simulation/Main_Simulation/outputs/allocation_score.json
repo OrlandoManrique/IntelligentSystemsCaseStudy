@@ -1,11 +1,11 @@
 {
   "total_capacity_m3": 17.450388,
-  "used_volume_m3": 4.53358018294,
-  "total_waste_m3": 7.178983817060001,
-  "utilization_pct": 25.979824534216654,
-  "avg_fill_ratio_per_location": 0.3664256209662548,
+  "used_volume_m3": 4.910874897435998,
+  "total_waste_m3": 7.243433102564,
+  "utilization_pct": 28.14192382104053,
+  "avg_fill_ratio_per_location": 0.3845936452318183,
   "n_locations_total": 357,
-  "n_locations_allocated": 183,
+  "n_locations_allocated": 202,
   "n_unallocated_skus": 8,
   "unallocated_item_ids": [
     44318341,

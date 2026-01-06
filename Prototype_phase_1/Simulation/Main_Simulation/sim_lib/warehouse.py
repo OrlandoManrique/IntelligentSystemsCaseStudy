@@ -7,6 +7,7 @@ from .data_loader import load_data
 from .allocation import assign_initial_stock
 from .simulation import build_sku_state  # run_simulation
 from .reporting import report_initial_state, export_allocations_csv
+from sim_lib.geometry import compute_layered_capacity
 
 
 def export_allocation_score_json(allocation_score, filename="allocation_score.json"):
@@ -33,6 +34,28 @@ def main():
         max_random_tries_per_location=200,
         seed=None,
     )
+
+    if unallocated_df is not None and not unallocated_df.empty:
+        print("\n--- GEOMETRY FEASIBILITY CHECK (ignoring occupancy) ---")
+    else:
+        print("\n--- GEOMETRY FEASIBILITY CHECK not possible---")
+
+    for _, sku in unallocated_df.iterrows():
+        sku_dims = [sku["LEN_MM"], sku["DEP_MM"], sku["WID_MM"]]
+        fits_anywhere = False
+
+        for loc in locations:
+            max_units, _, _ = compute_layered_capacity(loc["DIMS_MM"], sku_dims)
+            if max_units > 0:
+                fits_anywhere = True
+                break
+
+        print(
+            f"SKU {sku['ITEM_ID']} | "
+            f"fits anywhere in warehouse: {fits_anywhere}"
+        )
+
+    print("--- END GEOMETRY CHECK ---\n")
 
     # 3) Report initial layout
     report_initial_state(locations, total_capacity, used_volume, max_print=10)
