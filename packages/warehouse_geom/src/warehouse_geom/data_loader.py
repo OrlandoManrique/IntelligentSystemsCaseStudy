@@ -29,7 +29,24 @@ def load_data():
     # =====================================================
     # LOAD PARTS
     # =====================================================
-    parts_df = pd.read_csv(DATA_PATH / "synthetic_parts_generated.csv", sep=";")
+    parts_df = pd.read_csv(DATA_PATH / "synthetic_parts_generated_dummy.csv", sep=";")
+
+    # -------------------------------
+    # NEW: enforce BOXES_ON_HAND field
+    # -------------------------------
+    if "BOXES_ON_HAND" not in parts_df.columns:
+        raise ValueError(
+            "Required column 'BOXES_ON_HAND' not found in parts CSV. "
+            f"Available columns: {list(parts_df.columns)}"
+        )
+
+    parts_df["BOXES_ON_HAND"] = (
+        pd.to_numeric(parts_df["BOXES_ON_HAND"], errors="coerce")
+        .fillna(0)
+        .astype(int)
+        .clip(lower=0)
+    )
+    # -------------------------------
 
     # --- ABC classification based on demand ---
     parts_df = parts_df.sort_values("DEMAND", ascending=False).reset_index(drop=True)
@@ -59,7 +76,7 @@ def load_data():
     # =====================================================
     # LOAD LOCATIONS (MM)
     # =====================================================
-    locations_df = pd.read_csv(DATA_PATH / "locations.csv", sep=",")
+    locations_df = pd.read_csv(DATA_PATH / "locations_dummy.csv", sep=",")
 
     locations = []
 

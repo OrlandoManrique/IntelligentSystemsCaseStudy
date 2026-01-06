@@ -1,8 +1,0 @@
-ITEM_ID,Item_Dims,Reason
-11822852,"(np.float64(894.8), np.float64(499.1), np.float64(242.1))",Min Dim 242.1 > Bin Min 220.0
-44820084,"(np.float64(963.7), np.float64(240.9), np.float64(240.9))",Min Dim 240.9 > Bin Min 220.0
-55635283,"(np.float64(269.7), np.float64(269.7), np.float64(78.5))",Mid Dim 269.7 > Bin Mid 240.0
-40616638,"(np.float64(704.7), np.float64(546.6), np.float64(154.3))",Mid Dim 546.6 > Bin Mid 240.0
-19556106,"(np.float64(957.1), np.float64(414.0), np.float64(236.9))",Min Dim 236.9 > Bin Min 220.0
-44318341,"(np.float64(1169.3), np.float64(292.3), np.float64(98.6))",Mid Dim 292.3 > Bin Mid 240.0
-84522870,"(np.float64(278.1), np.float64(278.1), np.float64(184.6))",Mid Dim 278.1 > Bin Mid 240.0
