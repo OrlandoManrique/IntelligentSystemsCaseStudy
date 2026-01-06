@@ -179,3 +179,24 @@ Warehouse is full (no empty slots left).
 
 NO_FEASIBLE_FIT_IN_AVAILABLE_SLOTS
 SKU could fit in the warehouse, but not in the remaining free slots.
+
+5) Practical exmaple on how to call the libraries
+
+from sim_lib.data_loader import load_data
+from sim_lib.allocation import assign_initial_stock
+from sim_lib.geometry import compute_layered_capacity
+from sim_lib.distance import manhattan_distance
+
+parts, part_meta, locations, total_capacity, locations_index = load_data()
+
+locations, used_vol, unalloc_df, score = assign_initial_stock(
+    parts, locations, total_capacity
+)
+
+d = manhattan_distance("LOC_001", "LOC_010", locations_index)
+
+max_units, orient, grid = compute_layered_capacity(
+    [1200, 800, 600],
+    [400, 200, 300]
+)
+
