@@ -29,7 +29,7 @@ def load_data():
     # =====================================================
     # LOAD PARTS
     # =====================================================
-    parts_df = pd.read_csv(DATA_PATH / "synthetic_parts_generated_dummy.csv", sep=";")
+    parts_df = pd.read_csv(DATA_PATH / "synthetic_parts_generated.csv", sep=";")
 
     # -------------------------------
     # NEW: enforce BOXES_ON_HAND field
@@ -76,7 +76,7 @@ def load_data():
     # =====================================================
     # LOAD LOCATIONS (MM)
     # =====================================================
-    locations_df = pd.read_csv(DATA_PATH / "locations_dummy.csv", sep=",")
+    locations_df = pd.read_csv(DATA_PATH / "locations.csv", sep=",")
 
     locations = []
 

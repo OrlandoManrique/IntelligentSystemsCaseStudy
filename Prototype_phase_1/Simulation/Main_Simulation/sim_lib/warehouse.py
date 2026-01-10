@@ -59,7 +59,7 @@ def main():
 
     # 3) Report initial layout
     report_initial_state(locations, total_capacity, used_volume, max_print=10)
-    export_allocations_csv(locations, filename="allocations.csv")
+    export_allocations_csv(locations, filename="allocations_small.csv")
 
     # 4) Export allocation score
     unallocated_ids = []
@@ -78,7 +78,7 @@ def main():
     out_path = base_path / "outputs"
     out_path.mkdir(exist_ok=True)
 
-    csv_path = out_path / "unallocated_skus.csv"
+    csv_path = out_path / "unallocated_skus_small.csv"
 
     EXPECTED_COLS = ["ITEM_ID", "LEN_MM", "DEP_MM", "WID_MM", "VOLUME_MM3", "REASON"]
 
