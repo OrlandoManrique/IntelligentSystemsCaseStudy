@@ -5,7 +5,7 @@ from pathlib import Path
 
 MM3_TO_M3 = 1e-9
 
-def report_initial_state(locations, total_capacity, used_volume, max_print=10):
+def report_initial_state(locations, total_capacity, used_volume, max_print=30):
     print("\n--- WAREHOUSE INITIALIZATION (first 10 SKUs)---\n")
 
     allocated = [loc for loc in locations if loc["ASSIGNED_SKU"]]

@@ -58,7 +58,7 @@ def main():
     print("--- END GEOMETRY CHECK ---\n")
 
     # 3) Report initial layout
-    report_initial_state(locations, total_capacity, used_volume, max_print=10)
+    report_initial_state(locations, total_capacity, used_volume, max_print=40)
     export_allocations_csv(locations, filename="allocations_small.csv")
 
     # 4) Export allocation score
